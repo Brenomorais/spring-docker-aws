@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.breno.beerstore.model.Beer;
 import com.breno.beerstore.repository.Beers;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/beers")
 public class BeersResource {
@@ -28,7 +30,7 @@ public class BeersResource {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Beer create (@RequestBody Beer beer) {
+	public Beer create (@Valid @RequestBody Beer beer) {
 		return beers.save(beer);		
 	}
 
