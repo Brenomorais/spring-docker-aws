@@ -13,11 +13,16 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Beer {
 	
 	@Id
@@ -36,11 +41,13 @@ public class Beer {
 	@DecimalMin(value = "0", message = "beers-4")
 	private BigDecimal volume;
 	
+	//Usado na alteração
     @JsonIgnore
     public boolean isNew() {
         return getId() == null;
     }
-
+    
+    //Usado na alteração
     @JsonIgnore
     public boolean alreadyExist() {
         return getId() != null;
