@@ -32,6 +32,7 @@ public class ApiExceptionHandler {
 
 	private final MessageSource apiErrorMessageSource;
 
+	//Tramento para erros de validação
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException exception,
 			Locale locale) {
@@ -42,6 +43,7 @@ public class ApiExceptionHandler {
 		return ResponseEntity.badRequest().body(ErrorResponse.of(HttpStatus.BAD_REQUEST, apiErrors));
 	}
 
+	//Tratamento para formato invalido
 	@ExceptionHandler({ InvalidFormatException.class, HttpMessageNotReadableException.class })
 	public ResponseEntity<ErrorResponse> handleInvalidFormatException(InvalidFormatException exception, Locale locale) {
 		final HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -57,6 +59,7 @@ public class ApiExceptionHandler {
 		return createResponse(errorCode, status, locale);
 	}
 
+	//Tratamento para erros inesperados
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleInternalServerError(Exception exception, Locale locale) {
 		LOGGER.error("Error not expected", exception);

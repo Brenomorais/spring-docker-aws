@@ -30,7 +30,7 @@ public class BeersResource {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Beer create (@Valid @RequestBody Beer beer) {
+	public Beer create (@Valid @RequestBody Beer beer) {		
 		return beers.save(beer);		
 	}
 
