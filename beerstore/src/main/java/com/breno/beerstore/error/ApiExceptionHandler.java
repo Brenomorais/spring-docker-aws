@@ -34,6 +34,11 @@ public class ApiExceptionHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
 	private final MessageSource apiErrorMessageSource;
+	
+	private ResponseEntity<ErrorResponse> createResponse(String error, HttpStatus status, Locale locale) {
+		final ErrorResponse errorResponse = ErrorResponse.of(status, toApiError(error, locale));
+		return ResponseEntity.status(status).body(errorResponse);
+	}
 
 	//Tramento para erros de validação
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -67,17 +72,12 @@ public class ApiExceptionHandler {
 		final HttpStatus status = exception.getStatus();
 		return createResponse(errorCode, status, locale);
 	}
-
+	
 	//Tratamento para erros inesperados
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleInternalServerError(Exception exception, Locale locale) {
 		LOGGER.error("Error not expected", exception);
 		return createResponse("error-1", HttpStatus.INTERNAL_SERVER_ERROR, locale);
-	}
-
-	private ResponseEntity<ErrorResponse> createResponse(String error, HttpStatus status, Locale locale) {
-		final ErrorResponse errorResponse = ErrorResponse.of(status, toApiError(error, locale));
-		return ResponseEntity.status(status).body(errorResponse);
 	}
 
 	//Recebe o codigo de erro da validação usa o objeto apiErrorMessageSource para buscar a message custom e para criar o ApiError
