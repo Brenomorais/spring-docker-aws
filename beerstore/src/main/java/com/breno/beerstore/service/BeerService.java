@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.breno.beerstore.model.Beer;
 import com.breno.beerstore.repository.BeersRepository;
 import com.breno.beerstore.service.exception.BeerAlreadyExistException;
+import com.breno.beerstore.service.exception.EntityNotFoundException;
 
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class BeerService {
