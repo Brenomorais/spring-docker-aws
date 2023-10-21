@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.breno.beerstore.model.Beer;
-import com.breno.beerstore.repository.Beers;
+import com.breno.beerstore.service.BeerService;
 
 import jakarta.validation.Valid;
 
@@ -21,17 +21,17 @@ import jakarta.validation.Valid;
 public class BeersResource {
 	
 	@Autowired
-	private Beers beers;
+	private BeerService beerService;
 	
 	@GetMapping
 	public List<Beer> all(){
-		return beers.findAll();
+		return beerService.buscarTodas();
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Beer create (@Valid @RequestBody Beer beer) {		
-		return beers.save(beer);		
+		return beerService.cadastrar(beer);		
 	}
 
 }

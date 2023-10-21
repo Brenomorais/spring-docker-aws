@@ -1,27 +1,28 @@
 package com.breno.beerstore.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.breno.beerstore.model.Beer;
-import com.breno.beerstore.repository.Beers;
+import com.breno.beerstore.repository.BeersRepository;
 import com.breno.beerstore.service.exception.BeerAlreadyExistException;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class BeerService {
+	
+	@Autowired
+    private BeersRepository beers;
 
-
-    private Beers beers;
-
-    public BeerService(@Autowired Beers beers) {
+    public BeerService(@Autowired BeersRepository beers) {
         this.beers = beers;
     }
 
-    public Beer save(final Beer beer) {
+    public Beer cadastrar(final Beer beer) {
         verifyIfBeerExists(beer);
         return beers.save(beer);
     }
@@ -34,7 +35,7 @@ public class BeerService {
     }
 
     private void verifyIfBeerExists(final Beer beer) {
-        Optional<Beer> beerByNameAndType = beers.findByNameAndType(beer.getNome(), beer.getType());
+        Optional<Beer> beerByNameAndType = beers.findByNomeAndType(beer.getNome(), beer.getType());
 
         if (beerByNameAndType.isPresent() && (beer.isNew() || isUpdatingToADifferentBeer(beer, beerByNameAndType))) {
             throw new BeerAlreadyExistException();
@@ -44,5 +45,9 @@ public class BeerService {
     private boolean isUpdatingToADifferentBeer(Beer beer, Optional<Beer> beerByNameAndType) {
         return beer.alreadyExist() && !beerByNameAndType.get().equals(beer);
     }
+
+	public List<Beer> buscarTodas() {		
+		return beers.findAll();
+	}
 
 }
