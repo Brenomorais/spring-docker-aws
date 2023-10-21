@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+//Responsavel por carregar o arquivo de message: api_errors.properties
+
 @Configuration
 public class ApiErrorConfig {
 	@Bean

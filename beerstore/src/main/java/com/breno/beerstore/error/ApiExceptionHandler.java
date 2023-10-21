@@ -23,6 +23,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
+// Tratmento centralizado de erro o  controller advice no contexto do Spring consegue interceptar
+// as exceções lançadas pela aplicação e fazer o tratamento centralizado.
+
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ApiExceptionHandler {
@@ -34,13 +37,18 @@ public class ApiExceptionHandler {
 
 	//Tramento para erros de validação
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException exception,
-			Locale locale) {
+	public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException exception, Locale locale) {
+		//recupera todos os erros de validação em um stream
 		Stream<ObjectError> errors = exception.getBindingResult().getAllErrors().stream();
-		List<ApiError> apiErrors = errors.map(ObjectError::getDefaultMessage).map(code -> toApiError(code, locale))
+		
+		//processa stream mapeando a menasgem de erro informada nas anotações de validações da classe Bear
+		List<ApiError> apiErrors = errors.map(ObjectError::getDefaultMessage)
+				.map(code -> toApiError(code, locale))
 				.collect(toList());
-
-		return ResponseEntity.badRequest().body(ErrorResponse.of(HttpStatus.BAD_REQUEST, apiErrors));
+		
+		//retorna lista de erro processa no stream
+		return ResponseEntity.badRequest()
+				.body(ErrorResponse.of(HttpStatus.BAD_REQUEST, apiErrors));
 	}
 
 	//Tratamento para formato invalido
@@ -52,6 +60,7 @@ public class ApiExceptionHandler {
 		return ResponseEntity.status(status).body(errorResponse);
 	}
 
+	//Tratamento para excecoes do tipo BusinessException
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<ErrorResponse> handleBusinessExceptions(BusinessException exception, Locale locale) {
 		final String errorCode = exception.getCode();
@@ -71,11 +80,13 @@ public class ApiExceptionHandler {
 		return ResponseEntity.status(status).body(errorResponse);
 	}
 
+	//Recebe o codigo de erro da validação usa o objeto apiErrorMessageSource para buscar a message custom e para criar o ApiError
 	private ApiError toApiError(String code, Locale locale, Object... args) {
 		String message;
 		try {
 			message = apiErrorMessageSource.getMessage(code, args, locale);
 		} catch (NoSuchMessageException e) {
+			//caso message não exista no arquivo seta a mensagem NO_MESSAGE_AVAILABLE
 			LOGGER.error("Couldn't find any message for {} code " + "under {} locale", code);
 			message = NO_MESSAGE_AVAILABLE;
 		}
